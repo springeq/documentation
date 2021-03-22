@@ -1,0 +1,42 @@
+{
+	"title": "Scenario",
+	"type": "object",
+	"required": [
+		"loan_goal"
+	],
+	"properties": {
+		"loan_goal": {
+			"type": "string",
+			"enum": [
+				"PURCHASE",
+				"REFINANCE",
+				"CASHOUT"
+			]
+		},
+		"cashout_amount": {
+			"minimum": 0,
+			"type": "number",
+			"description": "Required if loan_goal is CASHOUT"
+		},
+		"first_mortgage_balance": {
+			"minimum": 0,
+			"type": "number",
+			"description": "Required if loan_goal is REFINANCE or CASHOUT"
+		},
+		"second_mortgage_balance": {
+			"minimum": 0,
+			"type": "number",
+			"description": "Required if loan_goal is REFINANCE or CASHOUT"
+		},
+		"purchase_price": {
+			"minimum": 0,
+			"type": "number",
+			"description": "Required if loan_goal is PURCHASE"
+		},
+		"down_payment_amount": {
+			"minimum": 0,
+			"type": "number",
+			"description": "Required if loan_goal is PURCHASE"
+		}
+	}
+}

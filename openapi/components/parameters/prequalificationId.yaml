@@ -1,0 +1,5 @@
+in: path
+name: seq_prequalification_id
+description: The prequalification ID returned after creating the Prequal Referral
+example: 424394a0-5b7d-4293-86fa-7d4652884680
+required: true

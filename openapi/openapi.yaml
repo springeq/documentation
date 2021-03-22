@@ -1,0 +1,32 @@
+openapi: 3.0.1
+info:
+  title: ConnectEQ Partner API
+  description: Manage prequalification quotes using the Connect EQ API.
+  license:
+    name: MIT
+  version: 1.0.0
+servers:
+  - url: 'https://staging.apply.springeq.com/api/v1'
+paths:
+  /login:
+    $ref: paths/login.yaml
+  /referral:
+    $ref: paths/referral.yaml
+  '/borrower/{borrower_id}':
+    $ref: 'paths/borrower@{borrower_id}.yaml'
+  '/application/{seq_application_id}':
+    $ref: 'paths/application@{seq_application_id}.yaml'
+  '/prequalification/{seq_prequalification_id}':
+    $ref: 'paths/prequalification@{seq_prequalification_id}.yaml'
+  '/prequalification/{seq_prequalification_id}/quote':
+    $ref: 'paths/prequalification@{seq_prequalification_id}@quote.yaml'
+  '/prequalification/{seq_prequalification_id}/quote/{quote_id}':
+    $ref: 'paths/prequalification@{seq_prequalification_id}@quote@{quote_id}.yaml'
+components:
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      description: |
+        Bearer Token Auth (ex. Authorization: Bearer TOKEN)
+      name: Authorization
+      in: header

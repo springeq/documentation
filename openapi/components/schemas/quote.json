@@ -1,0 +1,140 @@
+{
+	"title": "Quote",
+	"type": "object",
+	"properties": {
+		"quote_id": {
+			"type": "string",
+			"example": "bc41f76c-cd0c-450e-9cb2-c5fefe11578c"
+		},
+		"created_at": {
+			"type": "string",
+			"description": "Created datetime of the quote",
+			"example": "2021-03-19T16:33:49.878Z"
+		},
+		"updated_at": {
+			"type": "string",
+			"description": "Updated datetime of the quote",
+			"example": "2021-03-19T16:33:49.878Z"
+		},
+		"eligible": {
+			"type": "boolean"
+		},
+		"loan_amount": {
+			"type": "string",
+			"example": "200000.00"
+		},
+		"total_loan_amount": {
+			"type": "string",
+			"example": "200000.00"
+		},
+		"ltv": {
+			"type": "string",
+			"example": "40.000"
+		},
+		"cltv": {
+			"type": "string",
+			"example": "0.000"
+		},
+		"apr": {
+			"type": "string",
+			"example": "2.886"
+		},
+		"arm_index": {
+			"type": "string"
+		},
+		"arm_margin": {
+			"type": "string"
+		},
+		"closing_costs": {
+			"type": "string",
+			"example": "15995.00"
+		},
+		"loan_term": {
+			"type": "number",
+			"example": 30
+		},
+		"lock_term": {
+			"type": "number",
+			"example": 45
+		},
+		"amortization_term": {
+			"type": "number",
+			"example": 30
+		},
+		"amortization_type": {
+			"type": "string",
+			"example": "Fixed"
+		},
+		"price": {
+			"type": "string",
+			"example": "92.500"
+		},
+		"rate": {
+			"type": "string",
+			"example": "2.250"
+		},
+		"rebate": {
+			"type": "string",
+			"example": "0.00"
+		},
+		"discount": {
+			"type": "string",
+			"example": "15000.00"
+		},
+		"payment": {
+			"type": "string",
+			"example": "764.00"
+		},
+		"mortgage_insurance": {
+			"type": "string",
+			"example": "0.00"
+		},
+		"total_payment": {
+			"type": "string",
+			"example": "764.49"
+		},
+		"investor_id": {
+			"type": "number",
+			"example": 102708
+		},
+		"investor_name": {
+			"type": "string",
+			"example": "PennyMac"
+		},
+		"loan_type": {
+			"type": "string",
+			"example": "CONFORMING",
+			"enum": [
+				"CONVENTIONAL",
+				"CONFORMING",
+				"NON_CONFORMING",
+				"FHA",
+				"VA"
+			]
+		},
+		"lien_position": {
+			"type": "string",
+			"example": "FIRST",
+			"enum": [
+				"FIRST",
+				"SECOND",
+				"HELOC"
+			]
+		},
+		"price_status": {
+			"type": "string",
+			"example": "Available"
+		},
+		"product_id": {
+			"type": "number",
+			"example": 36371041
+		},
+		"product_name": {
+			"type": "string",
+			"example": "Freddie Mac 30 Yr Fixed > $175K <= $200K"
+		},
+		"selected": {
+			"type": "boolean"
+		}
+	}
+}

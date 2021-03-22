@@ -1,0 +1,73 @@
+{
+	"title": "ApplicationData",
+	"type": "object",
+	"properties": {
+		"most_recent_completed_form": {
+			"type": "string",
+			"description": "The application form name",
+			"example": "PERSONAL",
+			"enum": [
+				"PERSONAL",
+				"PROPERTY",
+				"INCOME",
+				"EMPLOYMENT",
+				"ASSETS",
+				"CONSENT",
+				"DECLARATIONS"
+			]
+		},
+		"most_recent_completed_form_timestamp": {
+			"type": "string"
+		},
+		"first_completed_personal_form_at": {
+			"type": "string"
+		},
+		"first_completed_property_form_at": {
+			"type": "string"
+		},
+		"first_completed_income_form_at": {
+			"type": "string"
+		},
+		"first_completed_employment_form_at": {
+			"type": "string"
+		},
+		"first_completed_assets_form_at": {
+			"type": "string"
+		},
+		"first_completed_consent_form_at": {
+			"type": "string"
+		},
+		"first_completed_declarations_form_at": {
+			"type": "string"
+		},
+		"loan_goal": {
+			"type": "string",
+			"enum": [
+				"CASHOUT",
+				"REFINANCE",
+				"PURCHASE"
+			]
+		},
+		"cashout_amount": {
+			"type": "string"
+		},
+		"first_mortgage_balance": {
+			"type": "string"
+		},
+		"second_mortgage_balance": {
+			"type": "string"
+		},
+		"payoff_second_mortgage": {
+			"type": "string"
+		},
+		"purchase_price": {
+			"type": "string"
+		},
+		"down_payment_amount": {
+			"type": "string"
+		},
+		"total_loan_amount": {
+			"type": "string"
+		}
+	}
+}

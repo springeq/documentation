@@ -1,0 +1,31 @@
+get:
+  summary: Get an Application by ID
+  description: >-
+    Query for the application by the `seq_application_id` returned from the
+    Prequal Referral response
+  parameters:
+    - $ref: ../components/parameters/applicationId.yaml
+    - in: query
+      name: include
+      description: An optional list of fields to include in the response
+      example: 'property_address,borrowers,application_data'
+      required: false
+  responses:
+    '200':
+      description: Successful Response
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - result
+              - status
+            properties:
+              status:
+                type: boolean
+              result:
+                $ref: ../components/schemas/application.json
+    '400':
+      $ref: ../components/responses/400ValidationError.yaml
+    '401':
+      $ref: ../components/responses/401AuthorizationError.yaml

@@ -1,0 +1,5 @@
+in: path
+name: seq_application_id
+description: The application ID returned after creating the Prequalification Referral
+example: fc2e6c62-7189-4106-a7ed-47443318b1b0
+required: true

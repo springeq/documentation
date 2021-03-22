@@ -1,0 +1,64 @@
+post:
+  summary: Get API Bearer Token
+  description: Get bearer token used to authenticate to ConnectEQ API
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - secret
+            - user_id
+          type: object
+          properties:
+            user_id:
+              type: string
+            secret:
+              type: string
+    required: true
+  responses:
+    '200':
+      description: Successful Login Response
+      content:
+        application/json:
+          schema:
+            required:
+              - result
+              - status
+            type: object
+            properties:
+              status:
+                type: boolean
+              result:
+                required:
+                  - expires_at
+                  - expires_in
+                  - access_token
+                  - token_type
+                type: object
+                properties:
+                  expires_at:
+                    type: string
+                    description: Token expiration date
+                    example: '2021-03-19 17:26:37'
+                  expires_in:
+                    type: integer
+                    description: Token expiration (in seconds)
+                    example: 3599
+                  access_token:
+                    type: string
+                    example: >-
+                      eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                  token_type:
+                    type: string
+                    enum:
+                      - Bearer
+          example:
+            status: true
+            result:
+              expires_at: '2021-03-19 17:26:37'
+              expires_in: 3599
+              access_token: >-
+                eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+              token_type: Bearer
+    '401':
+      $ref: ../components/responses/401AuthorizationError.yaml

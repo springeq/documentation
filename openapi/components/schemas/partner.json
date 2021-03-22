@@ -1,0 +1,26 @@
+{
+	"title": "Partner",
+	"type": "object",
+	"required": [
+		"partner_id",
+		"partner_name",
+		"unique_id"
+	],
+	"properties": {
+		"partner_id": {
+			"type": "string",
+			"description": "Partner Id (provided by Spring EQ)",
+			"example": "287b9a96-3661-4450-96d0-69084d73d24b"
+		},
+		"partner_name": {
+			"type": "string",
+			"description": "Partner Name (provided by Spring EQ)",
+			"example": "XYZ"
+		},
+		"unique_id": {
+			"type": "string",
+			"description": "Partner Identifier (ex. lead id, customer id) - used for reporting purposes",
+			"example": "abcd-1234-efgh-5678"
+		}
+	}
+}

@@ -1,0 +1,11 @@
+description: Authorization Error
+content:
+  application/json:
+    schema:
+      $ref: ../schemas/server_error.json
+    example:
+      status_code: 401
+      status: false
+      error:
+        type: AuthError
+        message: Incorrect user_id or password

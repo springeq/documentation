@@ -1,0 +1,72 @@
+post:
+  summary: Create Prequal Quote
+  description: >-
+    Generates an `seq_application_id`, `seq_prequalification_id`, and
+    `redirect_url` (a url to redirect borrower to once the quote request is
+    complete). The `redirect_url` will show the borrower their prequalified
+    quote options and allow them to proceed to an application. The redirect_url
+    accepts an optional query param `quote_id` which can be used to select the
+    borrowers preferred quote option.
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - borrower_details
+            - partner_details
+            - property_details
+            - scenario_details
+          properties:
+            partner_details:
+              $ref: ../components/schemas/partner.json
+            borrower_details:
+              type: array
+              items:
+                $ref: ../components/schemas/borrower.json
+            property_details:
+              $ref: ../components/schemas/property.json
+            scenario_details:
+              $ref: ../components/schemas/scenario.json
+    required: true
+  responses:
+    '200':
+      description: Successful Response
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - result
+              - status
+            properties:
+              status:
+                type: boolean
+              result:
+                required:
+                  - seq_application_id
+                  - seq_prequalification_id
+                  - redirect_url
+                  - quotes_returned
+                type: object
+                properties:
+                  seq_application_id:
+                    type: string
+                    description: Application ID
+                    example: fc2e6c62-7189-4106-a7ed-47443318b1b0
+                  seq_prequalification_id:
+                    type: string
+                    description: Prequalification ID
+                    example: 424394a0-5b7d-4293-86fa-7d4652884680
+                  redirect_url:
+                    type: string
+                    description: URL to redirect borrower to see prequalified offers
+                    example: >-
+                      https://staging.apply.springeq.com/prequal/referral/partner/0cf2820d-f60f-4311-97e2-f342b350e9ae?application_id=fc2e6c62-7189-4106-a7ed-47443318b1b0
+                  quotes_returned:
+                    type: boolean
+                    example: true
+    '400':
+      $ref: ../components/responses/400ValidationError.yaml
+    '401':
+      $ref: ../components/responses/401AuthorizationError.yaml

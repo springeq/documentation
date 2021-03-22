@@ -1,0 +1,40 @@
+{
+	"title": "Rule",
+	"type": "object",
+	"required": [
+		"id",
+		"name",
+		"applied_by"
+	],
+	"properties": {
+		"id": {
+			"type": "string",
+			"description": "The rule ID",
+			"example": "034e8a5a-ffb6-401c-b9c7-a2cb634d7802"
+		},
+		"created_at": {
+			"type": "string",
+			"description": "Created datetime of the rule",
+			"example": "2021-03-19T00:00:00.000Z"
+		},
+		"updated_at": {
+			"type": "string",
+			"description": "Created datetime of the rule",
+			"example": "2021-03-19T00:00:00.000Z"
+		},
+		"name": {
+			"type": "string",
+			"description": "The name of the rule",
+			"example": "PRICING.ALLOW_MORTGAGE_OPTIONS"
+		},
+		"applied_by": {
+			"type": "string",
+			"description": "What applied the rule",
+			"example": "DEFAULT",
+			"enum": [
+				"REFERRAL",
+				"DEFAULT"
+			]
+		}
+	}
+}

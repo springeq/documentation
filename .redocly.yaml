@@ -1,0 +1,7 @@
+apiDefinitions:
+  main: openapi/openapi.yaml
+lint:
+  extends:
+    - recommended
+  rules:
+    no-unused-components: warning

@@ -1,0 +1,54 @@
+{
+	"title": "ServerError",
+	"type": "object",
+	"required": [
+		"error",
+		"status",
+		"status_code"
+	],
+	"properties": {
+		"status": {
+			"type": "boolean"
+		},
+		"status_code": {
+			"type": "integer"
+		},
+		"error": {
+			"required": [
+				"type",
+				"message"
+			],
+			"type": "object",
+			"properties": {
+				"message": {
+					"type": "string"
+				},
+				"type": {
+					"type": "string",
+					"enum": [
+						"AuthError",
+						"ServerError",
+						"ValidationError"
+					]
+				}
+			}
+		}
+	},
+	"example": {
+		"status": false,
+		"status_code": 400,
+		"error": {
+			"type": "ValidationError",
+			"message": "Validation Error",
+			"detail": [
+				{
+					"value": "invalid@springeq.co",
+					"field": "email_address",
+					"errors": [
+						"email_address must be a valid email"
+					]
+				}
+			]
+		}
+	}
+}

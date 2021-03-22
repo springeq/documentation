@@ -1,0 +1,5 @@
+type: apiKey
+description: |
+  Bearer Token Auth (ex. Authorization: Bearer TOKEN)
+name: Authorization
+in: header

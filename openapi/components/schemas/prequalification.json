@@ -1,0 +1,104 @@
+{
+	"title": "Prequalification",
+	"type": "object",
+	"properties": {
+		"id": {
+			"type": "string",
+			"description": "Prequalification ID",
+			"example": "fc2e6c62-7189-4106-a7ed-47443318b1b0"
+		},
+		"created_at": {
+			"type": "string",
+			"description": "Created datetime of the application",
+			"example": "2021-03-19T16:33:49.878Z"
+		},
+		"updated_at": {
+			"type": "string",
+			"description": "Updated datetime of the application",
+			"example": "2021-03-19T16:33:49.878Z"
+		},
+		"loan_goal": {
+			"type": "string",
+			"enum": [
+				"PURCHASE",
+				"REFINANCE",
+				"CASHOUT"
+			]
+		},
+		"cashout_amount": {
+			"minimum": 0,
+			"type": "number",
+			"description": "Required if loan_goal is CASHOUT"
+		},
+		"first_mortgage_balance": {
+			"minimum": 0,
+			"type": "number",
+			"description": "Required if loan_goal is REFINANCE or CASHOUT"
+		},
+		"second_mortgage_balance": {
+			"minimum": 0,
+			"type": "number",
+			"description": "Required if loan_goal is REFINANCE or CASHOUT"
+		},
+		"purchase_price": {
+			"minimum": 0,
+			"type": "number",
+			"description": "Required if loan_goal is PURCHASE"
+		},
+		"down_payment_amount": {
+			"minimum": 0,
+			"type": "number",
+			"description": "Required if loan_goal is PURCHASE"
+		},
+		"total_loan_amount": {
+			"type": "string"
+		},
+		"application": {
+			"$ref": "./application_data.json"
+		},
+		"borrowers": {
+			"type": "array",
+			"items": {
+				"$ref": "./borrower.json"
+			}
+		},
+		"property_address": {
+			"$ref": "./property.json"
+		},
+		"result": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string",
+					"description": "The result ID",
+					"example": "6b37e42c-86db-4bf0-9e7e-5d96bf3d4bbb"
+				},
+				"created_at": {
+					"type": "string",
+					"description": "Created datetime of the result",
+					"example": "2021-03-19T16:33:49.878Z"
+				},
+				"updated_at": {
+					"type": "string",
+					"description": "Updated datetime of the result",
+					"example": "2021-03-19T16:33:49.878Z"
+				},
+				"quotes_returned": {
+					"type": "boolean"
+				},
+				"scenario_id": {
+					"type": "string",
+					"description": "The scenario ID",
+					"example": "9f342547-0a89-4a3a-b8c6-44ce86ab8a8a"
+				},
+				"quotes": {
+					"type": "array",
+					"minItems": 1,
+					"items": {
+						"$ref": "./quote.json"
+					}
+				}
+			}
+		}
+	}
+}

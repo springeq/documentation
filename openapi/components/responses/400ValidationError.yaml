@@ -1,0 +1,16 @@
+description: Validation Error
+content:
+  application/json:
+    schema:
+      $ref: ../schemas/server_error.json
+    example:
+      status: false
+      status_code: 400
+      error:
+        type: ValidationError
+        message: Validation Error
+        detail:
+          - value: invalid@springeq.co
+            field: email_address
+            errors:
+              - email_address must be a valid email

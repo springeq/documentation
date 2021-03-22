@@ -1,0 +1,1019 @@
+openapi: 3.0.1
+info:
+  title: ConnectEQ Partner API
+  description: Manage prequalification quotes using the Connect EQ API.
+  license:
+    name: MIT
+  version: 1.0.0
+servers:
+  - url: 'https://staging.apply.springeq.com/api/v1'
+paths:
+  /login:
+    post:
+      summary: Get API Bearer Token
+      description: Get bearer token used to authenticate to ConnectEQ API
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - secret
+                - user_id
+              type: object
+              properties:
+                user_id:
+                  type: string
+                secret:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Successful Login Response
+          content:
+            application/json:
+              schema:
+                required:
+                  - result
+                  - status
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  result:
+                    required:
+                      - expires_at
+                      - expires_in
+                      - access_token
+                      - token_type
+                    type: object
+                    properties:
+                      expires_at:
+                        type: string
+                        description: Token expiration date
+                        example: '2021-03-19 17:26:37'
+                      expires_in:
+                        type: integer
+                        description: Token expiration (in seconds)
+                        example: 3599
+                      access_token:
+                        type: string
+                        example: >-
+                          eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                      token_type:
+                        type: string
+                        enum:
+                          - Bearer
+              example:
+                status: true
+                result:
+                  expires_at: '2021-03-19 17:26:37'
+                  expires_in: 3599
+                  access_token: >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                  token_type: Bearer
+        '401':
+          $ref: '#/components/responses/401AuthorizationError'
+  /referral:
+    post:
+      summary: Create Prequal Quote
+      description: >-
+        Generates an `seq_application_id`, `seq_prequalification_id`, and
+        `redirect_url` (a url to redirect borrower to once the quote request is
+        complete). The `redirect_url` will show the borrower their prequalified
+        quote options and allow them to proceed to an application. The
+        redirect_url accepts an optional query param `quote_id` which can be
+        used to select the borrowers preferred quote option.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - borrower_details
+                - partner_details
+                - property_details
+                - scenario_details
+              properties:
+                partner_details:
+                  $ref: '#/components/schemas/partner'
+                borrower_details:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/borrower'
+                property_details:
+                  $ref: '#/components/schemas/property'
+                scenario_details:
+                  $ref: '#/components/schemas/scenario'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - result
+                  - status
+                properties:
+                  status:
+                    type: boolean
+                  result:
+                    required:
+                      - seq_application_id
+                      - seq_prequalification_id
+                      - redirect_url
+                      - quotes_returned
+                    type: object
+                    properties:
+                      seq_application_id:
+                        type: string
+                        description: Application ID
+                        example: fc2e6c62-7189-4106-a7ed-47443318b1b0
+                      seq_prequalification_id:
+                        type: string
+                        description: Prequalification ID
+                        example: 424394a0-5b7d-4293-86fa-7d4652884680
+                      redirect_url:
+                        type: string
+                        description: URL to redirect borrower to see prequalified offers
+                        example: >-
+                          https://staging.apply.springeq.com/prequal/referral/partner/0cf2820d-f60f-4311-97e2-f342b350e9ae?application_id=fc2e6c62-7189-4106-a7ed-47443318b1b0
+                      quotes_returned:
+                        type: boolean
+                        example: true
+        '400':
+          $ref: '#/components/responses/400ValidationError'
+        '401':
+          $ref: '#/components/responses/401AuthorizationError'
+  '/borrower/{borrower_id}':
+    get:
+      summary: Get a single borrower by ID
+      description: Get a single borrower by ID
+      parameters:
+        - in: path
+          name: borrower_id
+          description: The borrower ID
+          example: e0933681-7497-470e-820b-38649bf8399d
+          required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - result
+                  - status
+                properties:
+                  status:
+                    type: boolean
+                  result:
+                    $ref: '#/components/schemas/borrower'
+        '400':
+          $ref: '#/components/responses/400ValidationError'
+        '401':
+          $ref: '#/components/responses/401AuthorizationError'
+  '/application/{seq_application_id}':
+    get:
+      summary: Get an Application by ID
+      description: >-
+        Query for the application by the `seq_application_id` returned from the
+        Prequal Referral response
+      parameters:
+        - $ref: '#/components/parameters/applicationId'
+        - in: query
+          name: include
+          description: An optional list of fields to include in the response
+          example: 'property_address,borrowers,application_data'
+          required: false
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - result
+                  - status
+                properties:
+                  status:
+                    type: boolean
+                  result:
+                    $ref: '#/components/schemas/application'
+        '400':
+          $ref: '#/components/responses/400ValidationError'
+        '401':
+          $ref: '#/components/responses/401AuthorizationError'
+  '/prequalification/{seq_prequalification_id}':
+    get:
+      summary: Get an Prequal by ID
+      description: >-
+        Query for the prequal by the `seq_prequalification_id` returned from the
+        Prequal Referral response
+      parameters:
+        - $ref: '#/components/parameters/prequalificationId'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - result
+                  - status
+                properties:
+                  status:
+                    type: boolean
+                  result:
+                    $ref: '#/components/schemas/prequalification'
+        '400':
+          $ref: '#/components/responses/400ValidationError'
+        '401':
+          $ref: '#/components/responses/401AuthorizationError'
+  '/prequalification/{seq_prequalification_id}/quote':
+    get:
+      summary: Get all quotes for a given prequalification ID
+      description: Get all quotes for a given prequalification ID
+      parameters:
+        - $ref: '#/components/parameters/prequalificationId'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - result
+                  - status
+                properties:
+                  status:
+                    type: boolean
+                  result:
+                    type: array
+                    minItems: 1
+                    items:
+                      $ref: '#/components/schemas/quote'
+        '400':
+          $ref: '#/components/responses/400ValidationError'
+        '401':
+          $ref: '#/components/responses/401AuthorizationError'
+  '/prequalification/{seq_prequalification_id}/quote/{quote_id}':
+    get:
+      summary: Get a single quote for a given prequalification ID
+      description: Get a single quote for a given prequalification ID
+      parameters:
+        - $ref: '#/components/parameters/prequalificationId'
+        - $ref: '#/components/parameters/quoteId'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - result
+                  - status
+                properties:
+                  status:
+                    type: boolean
+                  result:
+                    $ref: '#/components/schemas/quote'
+        '400':
+          $ref: '#/components/responses/400ValidationError'
+        '401':
+          $ref: '#/components/responses/401AuthorizationError'
+components:
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      description: |
+        Bearer Token Auth (ex. Authorization: Bearer TOKEN)
+      name: Authorization
+      in: header
+  schemas:
+    server_error:
+      title: ServerError
+      type: object
+      required:
+        - error
+        - status
+        - status_code
+      properties:
+        status:
+          type: boolean
+        status_code:
+          type: integer
+        error:
+          required:
+            - type
+            - message
+          type: object
+          properties:
+            message:
+              type: string
+            type:
+              type: string
+              enum:
+                - AuthError
+                - ServerError
+                - ValidationError
+      example:
+        status: false
+        status_code: 400
+        error:
+          type: ValidationError
+          message: Validation Error
+          detail:
+            - value: invalid@springeq.co
+              field: email_address
+              errors:
+                - email_address must be a valid email
+    partner:
+      title: Partner
+      type: object
+      required:
+        - partner_id
+        - partner_name
+        - unique_id
+      properties:
+        partner_id:
+          type: string
+          description: Partner Id (provided by Spring EQ)
+          example: 287b9a96-3661-4450-96d0-69084d73d24b
+        partner_name:
+          type: string
+          description: Partner Name (provided by Spring EQ)
+          example: XYZ
+        unique_id:
+          type: string
+          description: >-
+            Partner Identifier (ex. lead id, customer id) - used for reporting
+            purposes
+          example: abcd-1234-efgh-5678
+    borrower:
+      title: Borrower
+      type: object
+      required:
+        - credit_score
+        - current_address
+        - date_of_birth
+        - email_address
+        - first_name
+        - is_primary
+        - last_name
+      properties:
+        is_primary:
+          type: boolean
+        first_name:
+          type: string
+        middle_name:
+          type: string
+        last_name:
+          type: string
+        date_of_birth:
+          pattern: '\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])'
+          type: string
+        email_address:
+          type: string
+        phone_number:
+          type: string
+          description: In the format XXXXXXXXXX or 1XXXXXXXXXX
+        credit_score:
+          type: integer
+          description: >-
+            Credit score group minimum value (ex. 800 = 740, 725 = 720, 600 =
+            619)
+        is_veteran:
+          type: boolean
+          default: false
+        most_recent_mortgage_late_date:
+          pattern: '\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])'
+          type: string
+        most_recent_bankruptcy_date:
+          pattern: '\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])'
+          type: string
+        most_recent_bankruptcy_type:
+          type: string
+          enum:
+            - CHAPTER_07
+            - CHAPTER_11
+            - CHAPTER_13
+        most_recent_foreclosure_date:
+          pattern: '\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])'
+          type: string
+        marital_status:
+          type: string
+          enum:
+            - MARRIED
+            - UNMARRIED
+            - SEPARATED
+        current_address:
+          required:
+            - address_line_one
+            - city
+            - state
+            - zip
+          type: object
+          properties:
+            address_line_one:
+              minLength: 1
+              type: string
+            address_line_two:
+              type: string
+            city:
+              minLength: 1
+              type: string
+            state:
+              type: string
+              enum:
+                - AL
+                - AK
+                - AS
+                - AZ
+                - AR
+                - CA
+                - CO
+                - CT
+                - DE
+                - DC
+                - FM
+                - FL
+                - GA
+                - GU
+                - HI
+                - ID
+                - IL
+                - IN
+                - IA
+                - KS
+                - KY
+                - LA
+                - ME
+                - MH
+                - MD
+                - MA
+                - MI
+                - MN
+                - MS
+                - MO
+                - MT
+                - NE
+                - NV
+                - NH
+                - NJ
+                - NM
+                - NY
+                - NC
+                - ND
+                - MP
+                - OH
+                - OK
+                - OR
+                - PW
+                - PA
+                - PR
+                - RI
+                - SC
+                - SD
+                - TN
+                - TX
+                - UT
+                - VT
+                - VI
+                - VA
+                - WA
+                - WV
+                - WI
+                - WY
+            zip:
+              maxLength: 5
+              minLength: 5
+              pattern: '\d{5}'
+              type: string
+    property:
+      title: Property
+      type: object
+      required:
+        - address_line_one
+        - city
+        - estimated_value
+        - occupancy_type
+        - state
+        - type
+        - zip
+      properties:
+        address_line_one:
+          minLength: 1
+          type: string
+        address_line_two:
+          type: string
+        city:
+          minLength: 1
+          type: string
+        state:
+          type: string
+          enum:
+            - AL
+            - AK
+            - AS
+            - AZ
+            - AR
+            - CA
+            - CO
+            - CT
+            - DE
+            - DC
+            - FM
+            - FL
+            - GA
+            - GU
+            - HI
+            - ID
+            - IL
+            - IN
+            - IA
+            - KS
+            - KY
+            - LA
+            - ME
+            - MH
+            - MD
+            - MA
+            - MI
+            - MN
+            - MS
+            - MO
+            - MT
+            - NE
+            - NV
+            - NH
+            - NJ
+            - NM
+            - NY
+            - NC
+            - ND
+            - MP
+            - OH
+            - OK
+            - OR
+            - PW
+            - PA
+            - PR
+            - RI
+            - SC
+            - SD
+            - TN
+            - TX
+            - UT
+            - VT
+            - VI
+            - VA
+            - WA
+            - WV
+            - WI
+            - WY
+        zip:
+          maxLength: 5
+          minLength: 5
+          pattern: '\d{5}'
+          type: string
+        county:
+          type: string
+        type:
+          type: string
+          enum:
+            - SFR
+            - MFR
+            - CONDO
+            - TOWNHOUSE
+            - MANUFACTURED
+            - COOP
+            - PUD
+        occupancy_type:
+          type: string
+          enum:
+            - PRIMARY
+            - INVESTMENT
+            - SECOND
+        estimated_value:
+          minimum: 0
+          type: number
+        units:
+          maximum: 4
+          minimum: 1
+          type: integer
+    scenario:
+      title: Scenario
+      type: object
+      required:
+        - loan_goal
+      properties:
+        loan_goal:
+          type: string
+          enum:
+            - PURCHASE
+            - REFINANCE
+            - CASHOUT
+        cashout_amount:
+          minimum: 0
+          type: number
+          description: Required if loan_goal is CASHOUT
+        first_mortgage_balance:
+          minimum: 0
+          type: number
+          description: Required if loan_goal is REFINANCE or CASHOUT
+        second_mortgage_balance:
+          minimum: 0
+          type: number
+          description: Required if loan_goal is REFINANCE or CASHOUT
+        purchase_price:
+          minimum: 0
+          type: number
+          description: Required if loan_goal is PURCHASE
+        down_payment_amount:
+          minimum: 0
+          type: number
+          description: Required if loan_goal is PURCHASE
+    rule:
+      title: Rule
+      type: object
+      required:
+        - id
+        - name
+        - applied_by
+      properties:
+        id:
+          type: string
+          description: The rule ID
+          example: 034e8a5a-ffb6-401c-b9c7-a2cb634d7802
+        created_at:
+          type: string
+          description: Created datetime of the rule
+          example: '2021-03-19T00:00:00.000Z'
+        updated_at:
+          type: string
+          description: Created datetime of the rule
+          example: '2021-03-19T00:00:00.000Z'
+        name:
+          type: string
+          description: The name of the rule
+          example: PRICING.ALLOW_MORTGAGE_OPTIONS
+        applied_by:
+          type: string
+          description: What applied the rule
+          example: DEFAULT
+          enum:
+            - REFERRAL
+            - DEFAULT
+    application_data:
+      title: ApplicationData
+      type: object
+      properties:
+        most_recent_completed_form:
+          type: string
+          description: The application form name
+          example: PERSONAL
+          enum:
+            - PERSONAL
+            - PROPERTY
+            - INCOME
+            - EMPLOYMENT
+            - ASSETS
+            - CONSENT
+            - DECLARATIONS
+        most_recent_completed_form_timestamp:
+          type: string
+        first_completed_personal_form_at:
+          type: string
+        first_completed_property_form_at:
+          type: string
+        first_completed_income_form_at:
+          type: string
+        first_completed_employment_form_at:
+          type: string
+        first_completed_assets_form_at:
+          type: string
+        first_completed_consent_form_at:
+          type: string
+        first_completed_declarations_form_at:
+          type: string
+        loan_goal:
+          type: string
+          enum:
+            - CASHOUT
+            - REFINANCE
+            - PURCHASE
+        cashout_amount:
+          type: string
+        first_mortgage_balance:
+          type: string
+        second_mortgage_balance:
+          type: string
+        payoff_second_mortgage:
+          type: string
+        purchase_price:
+          type: string
+        down_payment_amount:
+          type: string
+        total_loan_amount:
+          type: string
+    application:
+      title: Application
+      type: object
+      required:
+        - seq_application_id
+        - seq_prequalification_id
+        - redirect_url
+        - quotes_returned
+      properties:
+        id:
+          type: string
+          description: Application ID
+          example: fc2e6c62-7189-4106-a7ed-47443318b1b0
+        created_at:
+          type: string
+          description: Created datetime of the application
+          example: '2021-03-19T16:33:49.878Z'
+        updated_at:
+          type: string
+          description: Updated datetime of the application
+          example: '2021-03-19T16:33:49.878Z'
+        completed_at:
+          type: string
+          description: Completed datetime of the application
+          example: '2021-03-20T00:00:00.000Z'
+        started_at:
+          type: string
+          description: Started datetime of the application
+          example: '2021-03-20T00:00:00.000Z'
+        cancelled_at:
+          type: string
+          description: Cancelled datetime of the application
+          example: '2021-03-20T00:00:00.000Z'
+        deal_id:
+          type: string
+          description: Deal ID
+          example: c8e74688-eba0-4a0d-ae67-567398f740cf
+        scenario_id:
+          type: string
+          description: Scenario ID
+          example: 5eb3c418-c2f7-4aa6-8e18-f99e1bca301d
+        status:
+          type: string
+          description: The status of the application
+          example: CREATED
+          enum:
+            - CREATED
+            - STARTED
+            - COMPLETED
+            - CANCELLED
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/rule'
+        property_address:
+          $ref: '#/components/schemas/property'
+        borrowers:
+          type: array
+          items:
+            $ref: '#/components/schemas/borrower'
+        application_data:
+          $ref: '#/components/schemas/application_data'
+    quote:
+      title: Quote
+      type: object
+      properties:
+        quote_id:
+          type: string
+          example: bc41f76c-cd0c-450e-9cb2-c5fefe11578c
+        created_at:
+          type: string
+          description: Created datetime of the quote
+          example: '2021-03-19T16:33:49.878Z'
+        updated_at:
+          type: string
+          description: Updated datetime of the quote
+          example: '2021-03-19T16:33:49.878Z'
+        eligible:
+          type: boolean
+        loan_amount:
+          type: string
+          example: '200000.00'
+        total_loan_amount:
+          type: string
+          example: '200000.00'
+        ltv:
+          type: string
+          example: '40.000'
+        cltv:
+          type: string
+          example: '0.000'
+        apr:
+          type: string
+          example: '2.886'
+        arm_index:
+          type: string
+        arm_margin:
+          type: string
+        closing_costs:
+          type: string
+          example: '15995.00'
+        loan_term:
+          type: number
+          example: 30
+        lock_term:
+          type: number
+          example: 45
+        amortization_term:
+          type: number
+          example: 30
+        amortization_type:
+          type: string
+          example: Fixed
+        price:
+          type: string
+          example: '92.500'
+        rate:
+          type: string
+          example: '2.250'
+        rebate:
+          type: string
+          example: '0.00'
+        discount:
+          type: string
+          example: '15000.00'
+        payment:
+          type: string
+          example: '764.00'
+        mortgage_insurance:
+          type: string
+          example: '0.00'
+        total_payment:
+          type: string
+          example: '764.49'
+        investor_id:
+          type: number
+          example: 102708
+        investor_name:
+          type: string
+          example: PennyMac
+        loan_type:
+          type: string
+          example: CONFORMING
+          enum:
+            - CONVENTIONAL
+            - CONFORMING
+            - NON_CONFORMING
+            - FHA
+            - VA
+        lien_position:
+          type: string
+          example: FIRST
+          enum:
+            - FIRST
+            - SECOND
+            - HELOC
+        price_status:
+          type: string
+          example: Available
+        product_id:
+          type: number
+          example: 36371041
+        product_name:
+          type: string
+          example: Freddie Mac 30 Yr Fixed > $175K <= $200K
+        selected:
+          type: boolean
+    prequalification:
+      title: Prequalification
+      type: object
+      properties:
+        id:
+          type: string
+          description: Prequalification ID
+          example: fc2e6c62-7189-4106-a7ed-47443318b1b0
+        created_at:
+          type: string
+          description: Created datetime of the application
+          example: '2021-03-19T16:33:49.878Z'
+        updated_at:
+          type: string
+          description: Updated datetime of the application
+          example: '2021-03-19T16:33:49.878Z'
+        loan_goal:
+          type: string
+          enum:
+            - PURCHASE
+            - REFINANCE
+            - CASHOUT
+        cashout_amount:
+          minimum: 0
+          type: number
+          description: Required if loan_goal is CASHOUT
+        first_mortgage_balance:
+          minimum: 0
+          type: number
+          description: Required if loan_goal is REFINANCE or CASHOUT
+        second_mortgage_balance:
+          minimum: 0
+          type: number
+          description: Required if loan_goal is REFINANCE or CASHOUT
+        purchase_price:
+          minimum: 0
+          type: number
+          description: Required if loan_goal is PURCHASE
+        down_payment_amount:
+          minimum: 0
+          type: number
+          description: Required if loan_goal is PURCHASE
+        total_loan_amount:
+          type: string
+        application:
+          $ref: '#/components/schemas/application_data'
+        borrowers:
+          type: array
+          items:
+            $ref: '#/components/schemas/borrower'
+        property_address:
+          $ref: '#/components/schemas/property'
+        result:
+          type: object
+          properties:
+            id:
+              type: string
+              description: The result ID
+              example: 6b37e42c-86db-4bf0-9e7e-5d96bf3d4bbb
+            created_at:
+              type: string
+              description: Created datetime of the result
+              example: '2021-03-19T16:33:49.878Z'
+            updated_at:
+              type: string
+              description: Updated datetime of the result
+              example: '2021-03-19T16:33:49.878Z'
+            quotes_returned:
+              type: boolean
+            scenario_id:
+              type: string
+              description: The scenario ID
+              example: 9f342547-0a89-4a3a-b8c6-44ce86ab8a8a
+            quotes:
+              type: array
+              minItems: 1
+              items:
+                $ref: '#/components/schemas/quote'
+  responses:
+    401AuthorizationError:
+      description: Authorization Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/server_error'
+          example:
+            status_code: 401
+            status: false
+            error:
+              type: AuthError
+              message: Incorrect user_id or password
+    400ValidationError:
+      description: Validation Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/server_error'
+          example:
+            status: false
+            status_code: 400
+            error:
+              type: ValidationError
+              message: Validation Error
+              detail:
+                - value: invalid@springeq.co
+                  field: email_address
+                  errors:
+                    - email_address must be a valid email
+  parameters:
+    applicationId:
+      in: path
+      name: seq_application_id
+      description: The application ID returned after creating the Prequalification Referral
+      example: fc2e6c62-7189-4106-a7ed-47443318b1b0
+      required: true
+    prequalificationId:
+      in: path
+      name: seq_prequalification_id
+      description: The prequalification ID returned after creating the Prequal Referral
+      example: 424394a0-5b7d-4293-86fa-7d4652884680
+      required: true
+    quoteId:
+      in: path
+      name: quote_id
+      description: The target quote ID
+      example: bc41f76c-cd0c-450e-9cb2-c5fefe11578c
+      required: true

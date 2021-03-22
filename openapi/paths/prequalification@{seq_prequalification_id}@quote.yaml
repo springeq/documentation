@@ -1,0 +1,27 @@
+get:
+  summary: Get all quotes for a given prequalification ID
+  description: Get all quotes for a given prequalification ID
+  parameters:
+    - $ref: ../components/parameters/prequalificationId.yaml
+  responses:
+    '200':
+      description: Successful Response
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - result
+              - status
+            properties:
+              status:
+                type: boolean
+              result:
+                type: array
+                minItems: 1
+                items:
+                  $ref: ../components/schemas/quote.json
+    '400':
+      $ref: ../components/responses/400ValidationError.yaml
+    '401':
+      $ref: ../components/responses/401AuthorizationError.yaml

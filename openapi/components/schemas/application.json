@@ -1,0 +1,81 @@
+{
+	"title": "Application",
+	"type": "object",
+	"required": [
+		"seq_application_id",
+		"seq_prequalification_id",
+		"redirect_url",
+		"quotes_returned"
+	],
+	"properties": {
+		"id": {
+			"type": "string",
+			"description": "Application ID",
+			"example": "fc2e6c62-7189-4106-a7ed-47443318b1b0"
+		},
+		"created_at": {
+			"type": "string",
+			"description": "Created datetime of the application",
+			"example": "2021-03-19T16:33:49.878Z"
+		},
+		"updated_at": {
+			"type": "string",
+			"description": "Updated datetime of the application",
+			"example": "2021-03-19T16:33:49.878Z"
+		},
+		"completed_at": {
+			"type": "string",
+			"description": "Completed datetime of the application",
+			"example": "2021-03-20T00:00:00.000Z"
+		},
+		"started_at": {
+			"type": "string",
+			"description": "Started datetime of the application",
+			"example": "2021-03-20T00:00:00.000Z"
+		},
+		"cancelled_at": {
+			"type": "string",
+			"description": "Cancelled datetime of the application",
+			"example": "2021-03-20T00:00:00.000Z"
+		},
+		"deal_id": {
+			"type": "string",
+			"description": "Deal ID",
+			"example": "c8e74688-eba0-4a0d-ae67-567398f740cf"
+		},
+		"scenario_id": {
+			"type": "string",
+			"description": "Scenario ID",
+			"example": "5eb3c418-c2f7-4aa6-8e18-f99e1bca301d"
+		},
+		"status": {
+			"type": "string",
+			"description": "The status of the application",
+			"example": "CREATED",
+			"enum": [
+				"CREATED",
+				"STARTED",
+				"COMPLETED",
+				"CANCELLED"
+			]
+		},
+		"rules": {
+			"type": "array",
+			"items": {
+				"$ref": "./rule.json"
+			}
+		},
+		"property_address": {
+			"$ref": "./property.json"
+		},
+		"borrowers": {
+			"type": "array",
+			"items": {
+				"$ref": "./borrower.json"
+			}
+		},
+		"application_data": {
+			"$ref": "./application_data.json"
+		}
+	}
+}

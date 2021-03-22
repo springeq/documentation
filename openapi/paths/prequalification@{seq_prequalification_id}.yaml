@@ -1,0 +1,26 @@
+get:
+  summary: Get an Prequal by ID
+  description: >-
+    Query for the prequal by the `seq_prequalification_id` returned from the
+    Prequal Referral response
+  parameters:
+    - $ref: ../components/parameters/prequalificationId.yaml
+  responses:
+    '200':
+      description: Successful Response
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - result
+              - status
+            properties:
+              status:
+                type: boolean
+              result:
+                $ref: ../components/schemas/prequalification.json
+    '400':
+      $ref: ../components/responses/400ValidationError.yaml
+    '401':
+      $ref: ../components/responses/401AuthorizationError.yaml
