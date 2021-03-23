@@ -1,4 +1,5 @@
 post:
+  operationId: createPrequal
   summary: Create Prequal Quote
   description: >-
     Generates an `seq_application_id`, `seq_prequalification_id`, and

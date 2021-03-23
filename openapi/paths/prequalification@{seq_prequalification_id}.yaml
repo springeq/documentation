@@ -1,4 +1,5 @@
 get:
+  operationId: getPrequalById
   summary: Get an Prequal by ID
   description: >-
     Query for the prequal by the `seq_prequalification_id` returned from the

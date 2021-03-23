@@ -9,8 +9,3 @@ content:
       error:
         type: ValidationError
         message: Validation Error
-        detail:
-          - value: invalid@springeq.co
-            field: email_address
-            errors:
-              - email_address must be a valid email

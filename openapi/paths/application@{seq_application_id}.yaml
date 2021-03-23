@@ -1,4 +1,5 @@
 get:
+  operationId: getApplicationById
   summary: Get an Application by ID
   description: >-
     Query for the application by the `seq_application_id` returned from the

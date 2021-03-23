@@ -10,6 +10,7 @@ servers:
 paths:
   /login:
     post:
+      operationId: getApiToken
       summary: Get API Bearer Token
       description: Get bearer token used to authenticate to ConnectEQ API
       requestBody:
@@ -75,6 +76,7 @@ paths:
           $ref: '#/components/responses/401AuthorizationError'
   /referral:
     post:
+      operationId: createPrequal
       summary: Create Prequal Quote
       description: >-
         Generates an `seq_application_id`, `seq_prequalification_id`, and
@@ -148,6 +150,7 @@ paths:
           $ref: '#/components/responses/401AuthorizationError'
   '/borrower/{borrower_id}':
     get:
+      operationId: getBorrowerById
       summary: Get a single borrower by ID
       description: Get a single borrower by ID
       parameters:
@@ -175,8 +178,44 @@ paths:
           $ref: '#/components/responses/400ValidationError'
         '401':
           $ref: '#/components/responses/401AuthorizationError'
+    patch:
+      operationId: updateBorrowerById
+      summary: Update a borrower
+      description: Update a single borrower by ID
+      parameters:
+        - in: path
+          name: borrower_id
+          description: The borrower ID
+          example: e0933681-7497-470e-820b-38649bf8399d
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/borrower'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - result
+                  - status
+                properties:
+                  status:
+                    type: boolean
+                  result:
+                    $ref: '#/components/schemas/borrower'
+        '400':
+          $ref: '#/components/responses/400ValidationError'
+        '401':
+          $ref: '#/components/responses/401AuthorizationError'
   '/application/{seq_application_id}':
     get:
+      operationId: getApplicationById
       summary: Get an Application by ID
       description: >-
         Query for the application by the `seq_application_id` returned from the
@@ -209,6 +248,7 @@ paths:
           $ref: '#/components/responses/401AuthorizationError'
   '/prequalification/{seq_prequalification_id}':
     get:
+      operationId: getPrequalById
       summary: Get an Prequal by ID
       description: >-
         Query for the prequal by the `seq_prequalification_id` returned from the
@@ -236,6 +276,7 @@ paths:
           $ref: '#/components/responses/401AuthorizationError'
   '/prequalification/{seq_prequalification_id}/quote':
     get:
+      operationId: listPrequalQuotesById
       summary: Get all quotes for a given prequalification ID
       description: Get all quotes for a given prequalification ID
       parameters:
@@ -264,6 +305,7 @@ paths:
           $ref: '#/components/responses/401AuthorizationError'
   '/prequalification/{seq_prequalification_id}/quote/{quote_id}':
     get:
+      operationId: getPrequalQuotesById
       summary: Get a single quote for a given prequalification ID
       description: Get a single quote for a given prequalification ID
       parameters:
@@ -993,11 +1035,6 @@ components:
             error:
               type: ValidationError
               message: Validation Error
-              detail:
-                - value: invalid@springeq.co
-                  field: email_address
-                  errors:
-                    - email_address must be a valid email
   parameters:
     applicationId:
       in: path

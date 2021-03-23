@@ -9,6 +9,8 @@ Documentation is available as OpenAPI 3.0 via Swagger UI, served by GitHub Pages
 
 This repository was generated using [create-openapi-repo](https://github.com/Redocly/create-openapi-repo), which uses [redoc](https://github.com/Redocly/redoc) for development purposes.
 
+Static serving of Swagger UI is implemented as detailed by https://github.com/peter-evans/swagger-github-pages.
+
 ### How to make & publish changes
 
 1. `npm run start`

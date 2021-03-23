@@ -1,4 +1,5 @@
 get:
+  operationId: getBorrowerById
   summary: Get a single borrower by ID
   description: Get a single borrower by ID
   parameters:
@@ -7,6 +8,41 @@ get:
       description: The borrower ID
       example: e0933681-7497-470e-820b-38649bf8399d
       required: true
+  responses:
+    '200':
+      description: Successful Response
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - result
+              - status
+            properties:
+              status:
+                type: boolean
+              result:
+                $ref: ../components/schemas/borrower.json
+    '400':
+      $ref: ../components/responses/400ValidationError.yaml
+    '401':
+      $ref: ../components/responses/401AuthorizationError.yaml
+patch:
+  operationId: updateBorrowerById
+  summary: Update a borrower
+  description: Update a single borrower by ID
+  parameters:
+    - in: path
+      name: borrower_id
+      description: The borrower ID
+      example: e0933681-7497-470e-820b-38649bf8399d
+      required: true
+  requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/borrower.json
   responses:
     '200':
       description: Successful Response

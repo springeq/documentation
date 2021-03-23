@@ -1,4 +1,5 @@
 get:
+  operationId: listPrequalQuotesById
   summary: Get all quotes for a given prequalification ID
   description: Get all quotes for a given prequalification ID
   parameters:

@@ -4,6 +4,7 @@ info:
   description: Manage prequalification quotes using the Connect EQ API.
   license:
     name: MIT
+    url: https://github.com/springeq/documentation/blob/main/LICENSE
   version: 1.0.0
 servers:
   - url: 'https://staging.apply.springeq.com/api/v1'
