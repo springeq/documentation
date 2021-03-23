@@ -1,6 +1,6 @@
 get:
   operationId: getBorrowerById
-  summary: Get a single borrower by ID
+  summary: Get a single Borrower by ID
   description: Get a single borrower by ID
   parameters:
     - in: path
@@ -29,7 +29,7 @@ get:
       $ref: ../components/responses/401AuthorizationError.yaml
 patch:
   operationId: updateBorrowerById
-  summary: Update a borrower
+  summary: Update a single Borrower by ID
   description: Update a single borrower by ID
   parameters:
     - in: path

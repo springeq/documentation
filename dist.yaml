@@ -4,6 +4,7 @@ info:
   description: Manage prequalification quotes using the Connect EQ API.
   license:
     name: MIT
+    url: 'https://github.com/springeq/documentation/blob/main/LICENSE'
   version: 1.0.0
 servers:
   - url: 'https://staging.apply.springeq.com/api/v1'
@@ -151,7 +152,7 @@ paths:
   '/borrower/{borrower_id}':
     get:
       operationId: getBorrowerById
-      summary: Get a single borrower by ID
+      summary: Get a single Borrower by ID
       description: Get a single borrower by ID
       parameters:
         - in: path
@@ -180,7 +181,7 @@ paths:
           $ref: '#/components/responses/401AuthorizationError'
     patch:
       operationId: updateBorrowerById
-      summary: Update a borrower
+      summary: Update a single Borrower by ID
       description: Update a single borrower by ID
       parameters:
         - in: path
@@ -255,6 +256,37 @@ paths:
         Prequal Referral response
       parameters:
         - $ref: '#/components/parameters/prequalificationId'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - result
+                  - status
+                properties:
+                  status:
+                    type: boolean
+                  result:
+                    $ref: '#/components/schemas/prequalification'
+        '400':
+          $ref: '#/components/responses/400ValidationError'
+        '401':
+          $ref: '#/components/responses/401AuthorizationError'
+    patch:
+      operationId: updatePrequalById
+      summary: Update a Prequal By ID
+      description: Update a single prequal by ID
+      parameters:
+        - $ref: '#/components/parameters/prequalificationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/prequalification'
       responses:
         '200':
           description: Successful Response

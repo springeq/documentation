@@ -25,3 +25,34 @@ get:
       $ref: ../components/responses/400ValidationError.yaml
     '401':
       $ref: ../components/responses/401AuthorizationError.yaml
+patch:
+  operationId: updatePrequalById
+  summary: Update a Prequal By ID
+  description: Update a single prequal by ID
+  parameters:
+    - $ref: ../components/parameters/prequalificationId.yaml
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas/prequalification.json
+  responses:
+    '200':
+      description: Successful Response
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - result
+              - status
+            properties:
+              status:
+                type: boolean
+              result:
+                $ref: ../components/schemas/prequalification.json
+    '400':
+      $ref: ../components/responses/400ValidationError.yaml
+    '401':
+      $ref: ../components/responses/401AuthorizationError.yaml
