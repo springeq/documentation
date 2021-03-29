@@ -1,6 +1,7 @@
 get:
   tags:
     - Prequalification
+    - Quote
   security:
     - Bearer: [] 
   operationId: getPrequalQuotesById
