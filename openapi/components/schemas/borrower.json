@@ -42,7 +42,7 @@
 		"credit_score": {
 			"type": "integer",
 			"description": "Credit score group minimum value (ex. 800 = 740, 725 = 720, 600 = 619)",
-			"credit_score": 740
+			"example": 740
 		},
 		"is_veteran": {
 			"type": "boolean",
