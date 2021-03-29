@@ -2,10 +2,12 @@
 	"title": "Application",
 	"type": "object",
 	"required": [
-		"seq_application_id",
-		"seq_prequalification_id",
-		"redirect_url",
-		"quotes_returned"
+		"id",
+		"created_at",
+		"updated_at",
+		"completed_at",
+		"started_at",
+		"cancelled_at"
 	],
 	"properties": {
 		"id": {

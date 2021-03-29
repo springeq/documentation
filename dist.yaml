@@ -8,9 +8,12 @@ info:
   version: 1.0.0
 servers:
   - url: 'https://staging.apply.springeq.com/api/v1'
+  - url: 'https://apply.springeq.com/api/v1'
 paths:
   /login:
     post:
+      tags:
+        - Auth
       operationId: getApiToken
       summary: Get API Bearer Token
       description: Get bearer token used to authenticate to ConnectEQ API
@@ -77,6 +80,10 @@ paths:
           $ref: '#/components/responses/401AuthorizationError'
   /referral:
     post:
+      tags:
+        - Prequalification
+      security:
+        - Bearer: []
       operationId: createPrequal
       summary: Create Prequal Quote
       description: >-
@@ -85,7 +92,8 @@ paths:
         complete). The `redirect_url` will show the borrower their prequalified
         quote options and allow them to proceed to an application. The
         redirect_url accepts an optional query param `quote_id` which can be
-        used to select the borrowers preferred quote option.
+        used to select the borrowers preferred quote option and redirect the
+        borrower directly to  registration and the application.
       requestBody:
         content:
           application/json:
@@ -145,12 +153,18 @@ paths:
                       quotes_returned:
                         type: boolean
                         example: true
+                      quotes:
+                        $ref: '#/components/schemas/quote'
         '400':
           $ref: '#/components/responses/400ValidationError'
         '401':
           $ref: '#/components/responses/401AuthorizationError'
   '/borrower/{borrower_id}':
     get:
+      tags:
+        - Borrower
+      security:
+        - Bearer: []
       operationId: getBorrowerById
       summary: Get a single Borrower by ID
       description: Get a single borrower by ID
@@ -180,6 +194,10 @@ paths:
         '401':
           $ref: '#/components/responses/401AuthorizationError'
     patch:
+      tags:
+        - Borrower
+      security:
+        - Bearer: []
       operationId: updateBorrowerById
       summary: Update a single Borrower by ID
       description: Update a single borrower by ID
@@ -216,6 +234,10 @@ paths:
           $ref: '#/components/responses/401AuthorizationError'
   '/application/{seq_application_id}':
     get:
+      tags:
+        - Application
+      security:
+        - Bearer: []
       operationId: getApplicationById
       summary: Get an Application by ID
       description: >-
@@ -249,6 +271,8 @@ paths:
           $ref: '#/components/responses/401AuthorizationError'
   '/prequalification/{seq_prequalification_id}':
     get:
+      tags:
+        - Prequalification
       operationId: getPrequalById
       summary: Get an Prequal by ID
       description: >-
@@ -276,6 +300,10 @@ paths:
         '401':
           $ref: '#/components/responses/401AuthorizationError'
     patch:
+      tags:
+        - Prequalification
+      security:
+        - Bearer: []
       operationId: updatePrequalById
       summary: Update a Prequal By ID
       description: Update a single prequal by ID
@@ -308,6 +336,11 @@ paths:
           $ref: '#/components/responses/401AuthorizationError'
   '/prequalification/{seq_prequalification_id}/quote':
     get:
+      tags:
+        - Prequalification
+        - Quote
+      security:
+        - Bearer: []
       operationId: listPrequalQuotesById
       summary: Get all quotes for a given prequalification ID
       description: Get all quotes for a given prequalification ID
@@ -337,6 +370,10 @@ paths:
           $ref: '#/components/responses/401AuthorizationError'
   '/prequalification/{seq_prequalification_id}/quote/{quote_id}':
     get:
+      tags:
+        - Prequalification
+      security:
+        - Bearer: []
       operationId: getPrequalQuotesById
       summary: Get a single quote for a given prequalification ID
       description: Get a single quote for a given prequalification ID
@@ -365,11 +402,11 @@ paths:
 components:
   securitySchemes:
     Bearer:
-      type: apiKey
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
       description: |
         Bearer Token Auth (ex. Authorization: Bearer TOKEN)
-      name: Authorization
-      in: header
   schemas:
     server_error:
       title: ServerError
@@ -430,18 +467,24 @@ components:
             Partner Identifier (ex. lead id, customer id) - used for reporting
             purposes
           example: abcd-1234-efgh-5678
+        application_id:
+          type: string
+          description: >-
+            (Optional) Application Id returned from previous request. Used for
+            requesting additional scenarios (ex. new loan amount) while
+            preserving the same application
+          example: 366196d0-9a96-4450-287b-69084d73d24b
     borrower:
       title: Borrower
       type: object
       required:
         - credit_score
         - current_address
-        - date_of_birth
-        - email_address
-        - first_name
         - is_primary
-        - last_name
       properties:
+        id:
+          type: string
+          description: Unique Borrower Id (Primary Key)
         is_primary:
           type: boolean
         first_name:
@@ -489,7 +532,6 @@ components:
             - SEPARATED
         current_address:
           required:
-            - address_line_one
             - city
             - state
             - zip
@@ -574,14 +616,16 @@ components:
       title: Property
       type: object
       required:
-        - address_line_one
         - city
+        - state
+        - zip
         - estimated_value
         - occupancy_type
-        - state
         - type
-        - zip
       properties:
+        id:
+          type: string
+          description: Unique Property Id (Primary Key)
         address_line_one:
           minLength: 1
           type: string
@@ -714,151 +758,6 @@ components:
           minimum: 0
           type: number
           description: Required if loan_goal is PURCHASE
-    rule:
-      title: Rule
-      type: object
-      required:
-        - id
-        - name
-        - applied_by
-      properties:
-        id:
-          type: string
-          description: The rule ID
-          example: 034e8a5a-ffb6-401c-b9c7-a2cb634d7802
-        created_at:
-          type: string
-          description: Created datetime of the rule
-          example: '2021-03-19T00:00:00.000Z'
-        updated_at:
-          type: string
-          description: Created datetime of the rule
-          example: '2021-03-19T00:00:00.000Z'
-        name:
-          type: string
-          description: The name of the rule
-          example: PRICING.ALLOW_MORTGAGE_OPTIONS
-        applied_by:
-          type: string
-          description: What applied the rule
-          example: DEFAULT
-          enum:
-            - REFERRAL
-            - DEFAULT
-    application_data:
-      title: ApplicationData
-      type: object
-      properties:
-        most_recent_completed_form:
-          type: string
-          description: The application form name
-          example: PERSONAL
-          enum:
-            - PERSONAL
-            - PROPERTY
-            - INCOME
-            - EMPLOYMENT
-            - ASSETS
-            - CONSENT
-            - DECLARATIONS
-        most_recent_completed_form_timestamp:
-          type: string
-        first_completed_personal_form_at:
-          type: string
-        first_completed_property_form_at:
-          type: string
-        first_completed_income_form_at:
-          type: string
-        first_completed_employment_form_at:
-          type: string
-        first_completed_assets_form_at:
-          type: string
-        first_completed_consent_form_at:
-          type: string
-        first_completed_declarations_form_at:
-          type: string
-        loan_goal:
-          type: string
-          enum:
-            - CASHOUT
-            - REFINANCE
-            - PURCHASE
-        cashout_amount:
-          type: string
-        first_mortgage_balance:
-          type: string
-        second_mortgage_balance:
-          type: string
-        payoff_second_mortgage:
-          type: string
-        purchase_price:
-          type: string
-        down_payment_amount:
-          type: string
-        total_loan_amount:
-          type: string
-    application:
-      title: Application
-      type: object
-      required:
-        - seq_application_id
-        - seq_prequalification_id
-        - redirect_url
-        - quotes_returned
-      properties:
-        id:
-          type: string
-          description: Application ID
-          example: fc2e6c62-7189-4106-a7ed-47443318b1b0
-        created_at:
-          type: string
-          description: Created datetime of the application
-          example: '2021-03-19T16:33:49.878Z'
-        updated_at:
-          type: string
-          description: Updated datetime of the application
-          example: '2021-03-19T16:33:49.878Z'
-        completed_at:
-          type: string
-          description: Completed datetime of the application
-          example: '2021-03-20T00:00:00.000Z'
-        started_at:
-          type: string
-          description: Started datetime of the application
-          example: '2021-03-20T00:00:00.000Z'
-        cancelled_at:
-          type: string
-          description: Cancelled datetime of the application
-          example: '2021-03-20T00:00:00.000Z'
-        deal_id:
-          type: string
-          description: Deal ID
-          example: c8e74688-eba0-4a0d-ae67-567398f740cf
-        scenario_id:
-          type: string
-          description: Scenario ID
-          example: 5eb3c418-c2f7-4aa6-8e18-f99e1bca301d
-        status:
-          type: string
-          description: The status of the application
-          example: CREATED
-          enum:
-            - CREATED
-            - STARTED
-            - COMPLETED
-            - CANCELLED
-        rules:
-          type: array
-          items:
-            $ref: '#/components/schemas/rule'
-        property_address:
-          $ref: '#/components/schemas/property'
-        borrowers:
-          type: array
-          items:
-            $ref: '#/components/schemas/borrower'
-        application_data:
-          $ref: '#/components/schemas/application_data'
     quote:
       title: Quote
       type: object
@@ -964,6 +863,153 @@ components:
           example: Freddie Mac 30 Yr Fixed > $175K <= $200K
         selected:
           type: boolean
+    rule:
+      title: Rule
+      type: object
+      required:
+        - id
+        - name
+        - applied_by
+      properties:
+        id:
+          type: string
+          description: The rule ID
+          example: 034e8a5a-ffb6-401c-b9c7-a2cb634d7802
+        created_at:
+          type: string
+          description: Created datetime of the rule
+          example: '2021-03-19T00:00:00.000Z'
+        updated_at:
+          type: string
+          description: Created datetime of the rule
+          example: '2021-03-19T00:00:00.000Z'
+        name:
+          type: string
+          description: The name of the rule
+          example: PRICING.ALLOW_MORTGAGE_OPTIONS
+        applied_by:
+          type: string
+          description: What applied the rule
+          example: DEFAULT
+          enum:
+            - REFERRAL
+            - DEFAULT
+    application_data:
+      title: ApplicationData
+      type: object
+      properties:
+        most_recent_completed_form:
+          type: string
+          description: The application form name
+          example: PERSONAL
+          enum:
+            - PERSONAL
+            - PROPERTY
+            - INCOME
+            - EMPLOYMENT
+            - ASSETS
+            - CONSENT
+            - DECLARATIONS
+        most_recent_completed_form_timestamp:
+          type: string
+        first_completed_personal_form_at:
+          type: string
+        first_completed_property_form_at:
+          type: string
+        first_completed_income_form_at:
+          type: string
+        first_completed_employment_form_at:
+          type: string
+        first_completed_assets_form_at:
+          type: string
+        first_completed_consent_form_at:
+          type: string
+        first_completed_declarations_form_at:
+          type: string
+        loan_goal:
+          type: string
+          enum:
+            - CASHOUT
+            - REFINANCE
+            - PURCHASE
+        cashout_amount:
+          type: string
+        first_mortgage_balance:
+          type: string
+        second_mortgage_balance:
+          type: string
+        payoff_second_mortgage:
+          type: string
+        purchase_price:
+          type: string
+        down_payment_amount:
+          type: string
+        total_loan_amount:
+          type: string
+    application:
+      title: Application
+      type: object
+      required:
+        - id
+        - created_at
+        - updated_at
+        - completed_at
+        - started_at
+        - cancelled_at
+      properties:
+        id:
+          type: string
+          description: Application ID
+          example: fc2e6c62-7189-4106-a7ed-47443318b1b0
+        created_at:
+          type: string
+          description: Created datetime of the application
+          example: '2021-03-19T16:33:49.878Z'
+        updated_at:
+          type: string
+          description: Updated datetime of the application
+          example: '2021-03-19T16:33:49.878Z'
+        completed_at:
+          type: string
+          description: Completed datetime of the application
+          example: '2021-03-20T00:00:00.000Z'
+        started_at:
+          type: string
+          description: Started datetime of the application
+          example: '2021-03-20T00:00:00.000Z'
+        cancelled_at:
+          type: string
+          description: Cancelled datetime of the application
+          example: '2021-03-20T00:00:00.000Z'
+        deal_id:
+          type: string
+          description: Deal ID
+          example: c8e74688-eba0-4a0d-ae67-567398f740cf
+        scenario_id:
+          type: string
+          description: Scenario ID
+          example: 5eb3c418-c2f7-4aa6-8e18-f99e1bca301d
+        status:
+          type: string
+          description: The status of the application
+          example: CREATED
+          enum:
+            - CREATED
+            - STARTED
+            - COMPLETED
+            - CANCELLED
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/rule'
+        property_address:
+          $ref: '#/components/schemas/property'
+        borrowers:
+          type: array
+          items:
+            $ref: '#/components/schemas/borrower'
+        application_data:
+          $ref: '#/components/schemas/application_data'
     prequalification:
       title: Prequalification
       type: object
@@ -1085,4 +1131,3 @@ components:
       name: quote_id
       description: The target quote ID
       example: bc41f76c-cd0c-450e-9cb2-c5fefe11578c
-      required: true

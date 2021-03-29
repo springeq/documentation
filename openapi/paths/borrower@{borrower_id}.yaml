@@ -1,4 +1,8 @@
 get:
+  tags:
+    - Borrower
+  security:
+    - Bearer: [] 
   operationId: getBorrowerById
   summary: Get a single Borrower by ID
   description: Get a single borrower by ID
@@ -28,6 +32,10 @@ get:
     '401':
       $ref: ../components/responses/401AuthorizationError.yaml
 patch:
+  tags:
+    - Borrower
+  security:
+    - Bearer: [] 
   operationId: updateBorrowerById
   summary: Update a single Borrower by ID
   description: Update a single borrower by ID

@@ -1,4 +1,9 @@
 get:
+  tags:
+    - Prequalification
+    - Quote
+  security:
+    - Bearer: [] 
   operationId: getPrequalQuotesById
   summary: Get a single quote for a given prequalification ID
   description: Get a single quote for a given prequalification ID

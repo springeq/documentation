@@ -1,4 +1,8 @@
 get:
+  tags:
+    - Application
+  security:
+    - Bearer: [] 
   operationId: getApplicationById
   summary: Get an Application by ID
   description: >-
