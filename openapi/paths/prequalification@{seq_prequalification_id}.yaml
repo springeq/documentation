@@ -1,4 +1,6 @@
 get:
+  tags:
+    - Prequalification
   operationId: getPrequalById
   summary: Get an Prequal by ID
   description: >-
@@ -7,7 +9,7 @@ get:
   parameters:
     - $ref: ../components/parameters/prequalificationId.yaml
   responses:
-    '200':
+    "200":
       description: Successful Response
       content:
         application/json:
@@ -21,11 +23,15 @@ get:
                 type: boolean
               result:
                 $ref: ../components/schemas/prequalification.json
-    '400':
+    "400":
       $ref: ../components/responses/400ValidationError.yaml
-    '401':
+    "401":
       $ref: ../components/responses/401AuthorizationError.yaml
 patch:
+  tags:
+    - Prequalification
+  security:
+    - Bearer: [] 
   operationId: updatePrequalById
   summary: Update a Prequal By ID
   description: Update a single prequal by ID
@@ -38,7 +44,7 @@ patch:
         schema:
           $ref: ../components/schemas/prequalification.json
   responses:
-    '200':
+    "200":
       description: Successful Response
       content:
         application/json:
@@ -52,7 +58,7 @@ patch:
                 type: boolean
               result:
                 $ref: ../components/schemas/prequalification.json
-    '400':
+    "400":
       $ref: ../components/responses/400ValidationError.yaml
-    '401':
+    "401":
       $ref: ../components/responses/401AuthorizationError.yaml

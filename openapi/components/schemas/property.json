@@ -2,15 +2,18 @@
 	"title": "Property",
 	"type": "object",
 	"required": [
-		"address_line_one",
 		"city",
+		"state",
+		"zip",
 		"estimated_value",
 		"occupancy_type",
-		"state",
-		"type",
-		"zip"
+		"type"
 	],
 	"properties": {
+		"id": {
+			"type": "string",
+			"description": "Unique Property Id (Primary Key)"
+		},
 		"address_line_one": {
 			"minLength": 1,
 			"type": "string"

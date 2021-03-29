@@ -2,4 +2,3 @@ in: path
 name: quote_id
 description: The target quote ID
 example: bc41f76c-cd0c-450e-9cb2-c5fefe11578c
-required: true

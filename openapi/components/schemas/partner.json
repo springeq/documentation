@@ -21,6 +21,11 @@
 			"type": "string",
 			"description": "Partner Identifier (ex. lead id, customer id) - used for reporting purposes",
 			"example": "abcd-1234-efgh-5678"
+		},
+		"application_id": {
+			"type": "string",
+			"description": "(Optional) Application Id returned from previous request. Used for requesting additional scenarios (ex. new loan amount) while preserving the same application",
+			"example": "366196d0-9a96-4450-287b-69084d73d24b"
 		}
 	}
 }

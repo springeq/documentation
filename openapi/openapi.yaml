@@ -7,27 +7,28 @@ info:
     url: https://github.com/springeq/documentation/blob/main/LICENSE
   version: 1.0.0
 servers:
-  - url: 'https://staging.apply.springeq.com/api/v1'
+  - url: "https://staging.apply.springeq.com/api/v1"
+  - url: "https://apply.springeq.com/api/v1"
 paths:
   /login:
     $ref: paths/login.yaml
   /referral:
     $ref: paths/referral.yaml
-  '/borrower/{borrower_id}':
-    $ref: 'paths/borrower@{borrower_id}.yaml'
-  '/application/{seq_application_id}':
-    $ref: 'paths/application@{seq_application_id}.yaml'
-  '/prequalification/{seq_prequalification_id}':
-    $ref: 'paths/prequalification@{seq_prequalification_id}.yaml'
-  '/prequalification/{seq_prequalification_id}/quote':
-    $ref: 'paths/prequalification@{seq_prequalification_id}@quote.yaml'
-  '/prequalification/{seq_prequalification_id}/quote/{quote_id}':
-    $ref: 'paths/prequalification@{seq_prequalification_id}@quote@{quote_id}.yaml'
+  "/borrower/{borrower_id}":
+    $ref: "paths/borrower@{borrower_id}.yaml"
+  "/application/{seq_application_id}":
+    $ref: "paths/application@{seq_application_id}.yaml"
+  "/prequalification/{seq_prequalification_id}":
+    $ref: "paths/prequalification@{seq_prequalification_id}.yaml"
+  "/prequalification/{seq_prequalification_id}/quote":
+    $ref: "paths/prequalification@{seq_prequalification_id}@quote.yaml"
+  "/prequalification/{seq_prequalification_id}/quote/{quote_id}":
+    $ref: "paths/prequalification@{seq_prequalification_id}@quote@{quote_id}.yaml"
 components:
   securitySchemes:
     Bearer:
-      type: apiKey
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
       description: |
         Bearer Token Auth (ex. Authorization: Bearer TOKEN)
-      name: Authorization
-      in: header
